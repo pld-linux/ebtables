@@ -6,6 +6,7 @@ Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://ebtables.sourceforge.net/v2.0/v2.0./%{name}-v%{version}.tar.gz
+# Source0-md5:	ed6ce0de610fef9f2eaf9c72e2582d7d
 URL:		http://ebtables.sourceforge.net/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
