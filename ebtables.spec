@@ -7,6 +7,7 @@ License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/%{name}/%{name}-v%{version}.tar.gz
 # Source0-md5:	c4559af2366c764c6c42a3fdd40d60d3
+Patch0:		%{name}-llh.patch
 URL:		http://ebtables.sourceforge.net/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -28,6 +29,7 @@ standardowych j±der Linuksa w wersjach 2.5.x i nowszych.
 
 %prep
 %setup -q -n %{name}-v%{version}
+%patch0 -p1
 
 %build
 %{__make} CC="%{__cc}"
