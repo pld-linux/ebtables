@@ -1,12 +1,12 @@
 Summary:	Ethernet Bridge Tables
 Summary(pl):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
-Version:	2.0.4
+Version:	2.0.5
 Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/%{name}/%{name}-v%{version}.tar.gz
-# Source0-md5:	ac82b45bd220e5545ab91cf637354233
+# Source0-md5:	279feb4c1824a735c4add9bb97eea89e
 URL:		http://ebtables.sourceforge.net/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
