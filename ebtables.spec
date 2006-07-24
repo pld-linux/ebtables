@@ -44,11 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT%{_sbindir}
 install -d $RPM_BUILD_ROOT%{_sysconfdir}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
-install -d $RPM_BUILD_ROOT%{_mandir}
+install -d $RPM_BUILD_ROOT/etc/sysconfig
 install -d $RPM_BUILD_ROOT%{_mandir}/man8
 install -d $RPM_BUILD_ROOT%{_libdir}/ebtables
-install -d $RPM_BUILD_ROOT%{_initrddir}
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 
 install ebtables		$RPM_BUILD_ROOT%{_sbindir}
 install ebtables-restore	$RPM_BUILD_ROOT%{_sbindir}
@@ -62,9 +61,9 @@ export __iets2=`printf %{_mysysconfdir} | sed 's/\\//\\\\\\//g'`
 sed -i "s/__EXEC_PATH__/$__iets/g" ebtables-save
 install ebtables-save 		$RPM_BUILD_ROOT%{_sbindir}
 sed -i "s/__EXEC_PATH__/$__iets/g" ebtables.sysv; sed -i "s/__SYSCONFIG__/$__iets2/g" ebtables.sysv
-install ebtables.sysv		$RPM_BUILD_ROOT%{_initrddir}/ebtables
+install ebtables.sysv		$RPM_BUILD_ROOT/etc/rc.d/init.d/ebtables
 sed -i "s/__SYSCONFIG__/$__iets2/g" ebtables-config
-install ebtables-config		$RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+install ebtables-config		$RPM_BUILD_ROOT/etc/sysconfig
 unset __iets
 unset __iets2
 
@@ -82,10 +81,11 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog COPYING INSTALL THANKS
-%doc %{_mandir}/man8/ebtables.8*
-%config %{_sysconfdir}/ethertypes
-%config %{_sysconfdir}/sysconfig/ebtables-config
-%attr(755,root,root) %{_initrddir}/ebtables
+%doc ChangeLog INSTALL THANKS
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ethertypes
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ebtables-config
+%attr(755,root,root) /etc/rc.d/init.d/ebtables
 %attr(755,root,root) %{_sbindir}/*
-%{_libdir}/ebtables/
+%dir %{_libdir}/ebtables
+%attr(755,root,root) %{_libdir}/ebtables/*.so
+%{_mandir}/man8/ebtables.8*
