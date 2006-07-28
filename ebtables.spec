@@ -84,7 +84,7 @@ fi
 %doc ChangeLog INSTALL THANKS
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ethertypes
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ebtables-config
-%attr(755,root,root) /etc/rc.d/init.d/ebtables
+%attr(754,root,root) /etc/rc.d/init.d/ebtables
 %attr(755,root,root) %{_sbindir}/*
 %dir %{_libdir}/ebtables
 %attr(755,root,root) %{_libdir}/ebtables/*.so
