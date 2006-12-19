@@ -3,17 +3,21 @@
 #	- initscripts stuff - move save/restore dumps to /etc/sysconfig & more
 #	- review llh patch
 #
+%define		_rel	1
+%define		_pre	rc3
 Summary:	Ethernet Bridge Tables
 Summary(pl):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
 Version:	2.0.8
-%define		_pre	rc3
-Release:	0.%{_pre}.1
+Release:	0.%{_pre}.%{_rel}
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://dl.sourceforge.net/%{name}/%{name}-v%{version}-%{_pre}.tar.gz
+Source0:	http://dl.sourceforge.net/ebtables/%{name}-v%{version}-%{_pre}.tar.gz
 # Source0-md5:	92f0dd5107b92a744e104f50f9b2dd2d
 URL:		http://ebtables.sourceforge.net/
+BuildRequires:	rpmbuild(macros) >= 1.268
+Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -36,7 +40,8 @@ standardowych j±der Linuksa w wersjach 2.5.x i nowszych.
 %setup -q -n %{name}-v%{version}-%{_pre}
 
 %build
-%{__make} CC="%{__cc}"
+%{__make} \
+	CC="%{__cc}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -63,8 +68,6 @@ sed -i "s/__EXEC_PATH__/$__iets/g" ebtables.sysv; sed -i "s/__SYSCONFIG__/$__iet
 install ebtables.sysv		$RPM_BUILD_ROOT/etc/rc.d/init.d/ebtables
 sed -i "s/__SYSCONFIG__/$__iets2/g" ebtables-config
 install ebtables-config		$RPM_BUILD_ROOT/etc/sysconfig
-unset __iets
-unset __iets2
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -74,7 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/service ebtables stop &>/dev/null || :
+	%service ebtables stop
 	/sbin/chkconfig --del ebtables
 fi
 
