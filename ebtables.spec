@@ -7,10 +7,11 @@ Summary:	Ethernet Bridge Tables
 Summary(pl):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
 Version:	2.0.8
-Release:	0.rc2.1
+%define		_pre	rc2
+Release:	0.%{_pre}.1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://dl.sourceforge.net/%{name}/%{name}-v%{version}-rc2.tar.gz
+Source0:	http://dl.sourceforge.net/%{name}/%{name}-v%{version}-%{_pre}.tar.gz
 # Source0-md5:	f07111fcc1966be669278433c35dcc28
 Patch0:		%{name}-llh.patch
 URL:		http://ebtables.sourceforge.net/
@@ -33,7 +34,7 @@ dopasowywanie ramek. Infrastruktura ebtables jest czê¶ci±
 standardowych j±der Linuksa w wersjach 2.5.x i nowszych.
 
 %prep
-%setup -q -n %{name}-v%{version}-rc2
+%setup -q -n %{name}-v%{version}-%{_pre}
 %patch0 -p1
 
 %build
