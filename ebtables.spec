@@ -6,7 +6,7 @@
 %define		_rel	1
 %define		_pre	rc3
 Summary:	Ethernet Bridge Tables
-Summary(pl):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
+Summary(pl.UTF-8):   Ethernet Bridge Tables - filtrowanie i translacja adresÃ³w dla Ethernetu
 Name:		ebtables
 Version:	2.0.8
 Release:	0.%{_pre}.%{_rel}
@@ -28,13 +28,13 @@ kinds of frame NAT (Network Address Translation) and frame matching.
 The ebtables infrastructure is a part of the standard Linux 2.5.x (and
 above) kernels.
 
-%description -l pl
-Projekt ebtables to podsystem firewallingu na poziomie ³±cza dla
-Linuksa w wersjach 2.5.x i nowszych (dostêpna jest te¿ ³ata do 2.4.x).
-Dostarcza dla Linuksa funkcjonalno¶æ filtrowania ramek ethernetowych,
-wszystkie rodzaje translacji adresów (NAT) dla ramek oraz
-dopasowywanie ramek. Infrastruktura ebtables jest czê¶ci±
-standardowych j±der Linuksa w wersjach 2.5.x i nowszych.
+%description -l pl.UTF-8
+Projekt ebtables to podsystem firewallingu na poziomie Å‚Ä…cza dla
+Linuksa w wersjach 2.5.x i nowszych (dostÄ™pna jest teÅ¼ Å‚ata do 2.4.x).
+Dostarcza dla Linuksa funkcjonalnoÅ›Ä‡ filtrowania ramek ethernetowych,
+wszystkie rodzaje translacji adresÃ³w (NAT) dla ramek oraz
+dopasowywanie ramek. Infrastruktura ebtables jest czÄ™Å›ciÄ…
+standardowych jÄ…der Linuksa w wersjach 2.5.x i nowszych.
 
 %prep
 %setup -q -n %{name}-v%{version}-%{_pre}
