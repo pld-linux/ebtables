@@ -6,7 +6,7 @@
 %define		_rel	1
 %define		_pre	rc3
 Summary:	Ethernet Bridge Tables
-Summary(pl.UTF-8):   Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
+Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
 Version:	2.0.8
 Release:	0.%{_pre}.%{_rel}
