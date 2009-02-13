@@ -3,7 +3,7 @@
 #	- initscripts stuff - move save/restore dumps to /etc/sysconfig & more
 #	- review llh patch
 #
-%define		_rel	1
+%define		_rel	2
 %define		_pre	2
 Summary:	Ethernet Bridge Tables
 Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
