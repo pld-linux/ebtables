@@ -3,17 +3,17 @@
 #	- initscripts stuff - move save/restore dumps to /etc/sysconfig & more
 #	- review llh patch
 #
-%define		_pre	2
+%define		_pre	4
 %define		_rel	1
 Summary:	Ethernet Bridge Tables
 Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
-Version:	2.0.9
+Version:	2.0.10
 Release:	%{_pre}.%{_rel}
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/ebtables/%{name}-v%{version}-%{_pre}.tar.gz
-# Source0-md5:	b880429a6424186728eb57ae80ef878a
+# Source0-md5:	506742a3d44b9925955425a659c1a8d0
 URL:		http://ebtables.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
