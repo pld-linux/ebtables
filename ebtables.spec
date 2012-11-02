@@ -12,7 +12,7 @@ Version:	2.0.10
 Release:	%{_pre}.%{_rel}
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://dl.sourceforge.net/ebtables/%{name}-v%{version}-%{_pre}.tar.gz
+Source0:	http://downloads.sourceforge.net/ebtables/%{name}-v%{version}-%{_pre}.tar.gz
 # Source0-md5:	506742a3d44b9925955425a659c1a8d0
 URL:		http://ebtables.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.268
