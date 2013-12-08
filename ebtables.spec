@@ -1,19 +1,22 @@
-#
 # TODO:
-#	- initscripts stuff - move save/restore dumps to /etc/sysconfig & more
 #	- review llh patch
 #
-%define		_pre	4
-%define		_rel	1
+%define		ver	2.0.10
+%define		vermin	4
 Summary:	Ethernet Bridge Tables
 Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
-Version:	2.0.10
-Release:	%{_pre}.%{_rel}
+Version:	%{ver}.%{vermin}
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://downloads.sourceforge.net/ebtables/%{name}-v%{version}-%{_pre}.tar.gz
+Source0:	http://downloads.sourceforge.net/ebtables/%{name}-v%{ver}-%{vermin}.tar.gz
 # Source0-md5:	506742a3d44b9925955425a659c1a8d0
+Source1:	%{name}.init
+Source2:	%{name}-config
+Patch0:		ebtables-audit.patch
+Patch1:		ebtables-linkfix.patch
+Patch2:		ebtables-norootinst.patch
 URL:		http://ebtables.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
@@ -37,31 +40,34 @@ dopasowywanie ramek. Infrastruktura ebtables jest częścią
 standardowych jąder Linuksa w wersjach 2.5.x i nowszych.
 
 %prep
-%setup -q -n %{name}-v%{version}-%{_pre}
+%setup -q -n %{name}-v%{ver}-%{vermin}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 %{__make} \
+	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}" \
-	CC="%{__cc}"
+	LIBDIR="%{_libdir}/ebtables" \
+	BINDIR="%{_sbindir}" \
+	MANDIR="%{_mandir}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{/etc/sysconfig,/etc/rc.d/init.d,%{_sysconfdir},%{_sbindir},%{_libdir},%{_mandir}/man8}
+install -d $RPM_BUILD_ROOT{/etc/sysconfig,/etc/rc.d/init.d,%{_sysconfdir}} \
+	$RPM_BUILD_ROOT{%{_sbindir},%{_libdir}/ebtables,%{_mandir}/man8}
 
 install ebtables{,-restore}	$RPM_BUILD_ROOT%{_sbindir}
 install ethertypes		$RPM_BUILD_ROOT%{_sysconfdir}
 install ebtables.8		$RPM_BUILD_ROOT%{_mandir}/man8
-install extensions/*.so	*.so	$RPM_BUILD_ROOT%{_libdir}
+install extensions/*.so	*.so	$RPM_BUILD_ROOT%{_libdir}/ebtables
+install ebtables-save		$RPM_BUILD_ROOT%{_sbindir}
+%{__sed} -i -e "s|__EXEC_PATH__|%{_sbindir}|g" $RPM_BUILD_ROOT%{_sbindir}/ebtables-save
 
-export __iets=`printf %{_sbindir} | sed 's/\\//\\\\\\//g'`
-export __iets2=`printf %{_mysysconfdir} | sed 's/\\//\\\\\\//g'`
-sed -i "s/__EXEC_PATH__/$__iets/g" ebtables-save
-install ebtables-save 		$RPM_BUILD_ROOT%{_sbindir}
-sed -i "s/__EXEC_PATH__/$__iets/g" ebtables.sysv; sed -i "s/__SYSCONFIG__/$__iets2/g" ebtables.sysv
-install ebtables.sysv		$RPM_BUILD_ROOT/etc/rc.d/init.d/ebtables
-sed -i "s/__SYSCONFIG__/$__iets2/g" ebtables-config
-install ebtables-config		$RPM_BUILD_ROOT/etc/sysconfig
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/ebtables
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/ebtables-config
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -82,5 +88,5 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ebtables-config
 %attr(754,root,root) /etc/rc.d/init.d/ebtables
 %attr(755,root,root) %{_sbindir}/ebtables*
-%attr(755,root,root) %{_libdir}/libebt*.so
+%attr(755,root,root) %{_libdir}/ebtables/libebt*.so
 %{_mandir}/man8/ebtables.8*
