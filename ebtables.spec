@@ -1,13 +1,10 @@
-# TODO:
-#	- review llh patch
-#
 %define		ver	2.0.10
 %define		vermin	4
 Summary:	Ethernet Bridge Tables
 Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
 Version:	%{ver}.%{vermin}
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/ebtables/%{name}-v%{ver}-%{vermin}.tar.gz
@@ -88,5 +85,6 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ebtables-config
 %attr(754,root,root) /etc/rc.d/init.d/ebtables
 %attr(755,root,root) %{_sbindir}/ebtables*
+%dir %{_libdir}/ebtables
 %attr(755,root,root) %{_libdir}/ebtables/libebt*.so
 %{_mandir}/man8/ebtables.8*
