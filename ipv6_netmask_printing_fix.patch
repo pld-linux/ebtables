@@ -15,7 +15,7 @@ index 0465e77..52a8448 100644
  			printf("! ");
  		printf("%s", ebt_ip6_to_numeric(&ipinfo->daddr));
 -		printf("/%s ", ebt_ip6_to_numeric(&ipinfo->dmsk));
-+		printf("%s ", ebt_ip6_mask_to_string(&ipinfo->smsk));
++		printf("%s ", ebt_ip6_mask_to_string(&ipinfo->dmsk));
  	}
  	if (ipinfo->bitmask & EBT_IP6_TCLASS) {
  		printf("--ip6-tclass ");
@@ -46,7 +46,7 @@ index d20b68e..2f73589 100644
 +	 * /0000:0000:0000:0000:0000:0000:0000:0000 */
 +	static char buf[51+1];
 +	if (msk->s6_addr32[0] == 0xFFFFFFFFL && msk->s6_addr32[1] == 0xFFFFFFFFL &&
-+			msk->s6_addr32[2] == 0xFFFFFFFFL && msk->s6_addr32[3] == 0xFFFFFFFFL)
++	    msk->s6_addr32[2] == 0xFFFFFFFFL && msk->s6_addr32[3] == 0xFFFFFFFFL)
 +		*buf = '\0';
 +	else
 +		sprintf(buf, "/%s", ebt_ip6_to_numeric(msk));
