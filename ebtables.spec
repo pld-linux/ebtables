@@ -10,9 +10,8 @@ Source0:	https://ftp.netfilter.org/pub/ebtables/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}-config
 URL:		https://ebtables.netfilter.org/
-BuildRequires:	autoconf
-BuildRequires:	automake
-BuildRequires:	libtool
+# <linux/netfilter/xt_AUDIT.h>
+BuildRequires:	linux-libc-headers >= 6:3.0
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
@@ -42,6 +41,7 @@ standardowych jąder Linuksa w wersjach 2.5.x i nowszych.
 %configure \
 	--disable-silent-rules \
 	LOCKFILE=/var/lib/ebtables/lock
+
 %{__make}
 
 %install
@@ -52,13 +52,15 @@ install -d $RPM_BUILD_ROOT{/etc/sysconfig,/etc/rc.d/init.d}
 	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/ebtables
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/ebtables-config
+cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/ebtables-config
 
 # create compatibility symlinks (upstream renamed to ebtables-legacy)
 ln -sf ebtables-legacy $RPM_BUILD_ROOT%{_sbindir}/ebtables
 ln -sf ebtables-legacy-restore $RPM_BUILD_ROOT%{_sbindir}/ebtables-restore
 ln -sf ebtables-legacy-save $RPM_BUILD_ROOT%{_sbindir}/ebtables-save
 
+# headers are not installed
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libebtc.so
 # remove libtool archives and deprecated binaries
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libebtc.la
 %{__rm} $RPM_BUILD_ROOT%{_sbindir}/ebtables{d,u}
@@ -87,7 +89,6 @@ fi
 %{_sbindir}/ebtables
 %{_sbindir}/ebtables-restore
 %{_sbindir}/ebtables-save
-%attr(755,root,root) %{_libdir}/libebtc.so.0.*.*
-%{_libdir}/libebtc.so.0
-%{_libdir}/libebtc.so
+%{_libdir}/libebtc.so.*.*.*
+%ghost %{_libdir}/libebtc.so.0
 %{_mandir}/man8/ebtables-legacy.8*

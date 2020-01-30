@@ -34,10 +34,10 @@ start() {
 		show "Starting Ethernet bridge filtering (ebtables)"
 		if is_yes "$EBTABLES_BINARY_FORMAT"; then
 			for table in $(ls /etc/sysconfig/ebtables.* 2>/dev/null | sed -e 's/.*ebtables\.//' -e '/save/d' ); do
-				/usr/sbin/ebtables -t $table --atomic-file /etc/sysconfig/ebtables.$table --atomic-commit || RETVAL=1
+				/usr/sbin/ebtables-legacy -t $table --atomic-file /etc/sysconfig/ebtables.$table --atomic-commit || RETVAL=1
 			done
 		else
-			/usr/sbin/ebtables-restore < /etc/sysconfig/ebtables || RETVAL=1
+			/usr/sbin/ebtables-legacy-restore < /etc/sysconfig/ebtables || RETVAL=1
 		fi
 
 		if [ $RETVAL -eq 0 ]; then
@@ -52,7 +52,7 @@ start() {
 stop() {
 	show "Stopping Ethernet bridge filtering (ebtables)"
 	for table in $(grep '^ebtable_' /proc/modules | sed -e 's/ebtable_\([^ ]*\).*/\1/'); do
-		/usr/sbin/ebtables -t $table --init-table || RETVAL=1
+		/usr/sbin/ebtables-legacy -t $table --init-table || RETVAL=1
 	done
 
 	if [ $RETVAL -eq 0 ]; then
@@ -75,7 +75,7 @@ save() {
 			chmod 0600 /etc/sysconfig/ebtables
 			mv -f /etc/sysconfig/ebtables /etc/sysconfig/ebtables.save
 		fi
-		/usr/sbin/ebtables-save > /etc/sysconfig/ebtables || RETVAL=1
+		/usr/sbin/ebtables-legacy-save > /etc/sysconfig/ebtables || RETVAL=1
 	fi
 	if is_yes "$EBTABLES_BINARY_FORMAT"; then
 		rm -f /etc/sysconfig/ebtables.*.save
@@ -84,9 +84,9 @@ save() {
 			mv -f $oldtable $oldtable.save
 		done
 		for table in $(grep '^ebtable_' /proc/modules | sed -e 's/ebtable_\([^ ]*\).*/\1/'); do
-			/usr/sbin/ebtables -t $table --atomic-file /etc/sysconfig/ebtables.$table --atomic-save || RETVAL=1
+			/usr/sbin/ebtables-legacy -t $table --atomic-file /etc/sysconfig/ebtables.$table --atomic-save || RETVAL=1
 			if [ "$EBTABLES_SAVE_COUNTER" = "no" ]; then
-				/usr/sbin/ebtables -t $table --atomic-file /etc/sysconfig/ebtables.$table -Z || RETVAL=1
+				/usr/sbin/ebtables-legacy -t $table --atomic-file /etc/sysconfig/ebtables.$table -Z || RETVAL=1
 			fi
 		done
 	fi
@@ -119,7 +119,7 @@ case "$1" in
 	;;
   status)
 	for table in $(grep '^ebtable_' /proc/modules | sed -e 's/ebtable_\([^ ]*\).*/\1/'); do
-		/usr/sbin/ebtables -t $table --list
+		/usr/sbin/ebtables-legacy -t $table --list
 	done
 	;;
   *)
