@@ -1,21 +1,17 @@
-%define		ver	2.0.10
-%define		vermin	4
 Summary:	Ethernet Bridge Tables
 Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
-Version:	%{ver}.%{vermin}
-Release:	5
+Version:	2.0.11
+Release:	1
 License:	GPL v2+
 Group:		Networking/Daemons
-Source0:	http://downloads.sourceforge.net/ebtables/%{name}-v%{ver}-%{vermin}.tar.gz
-# Source0-md5:	506742a3d44b9925955425a659c1a8d0
+Source0:	http://ftp.netfilter.org/pub/ebtables/%{name}-%{version}.tar.gz
+# Source0-md5:	071c8b0a59241667a0044fb040d4fc72
 Source1:	%{name}.init
 Source2:	%{name}-config
-Patch0:		ebtables-audit.patch
-Patch1:		ebtables-linkfix.patch
-Patch2:		ebtables-norootinst.patch
-Patch3:		ipv6_netmask_printing_fix.patch
 URL:		http://ebtables.sourceforge.net/
+# <linux/netfilter/xt_AUDIT.h>
+BuildRequires:	linux-libc-headers >= 6:3.0
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
@@ -39,33 +35,34 @@ dopasowywanie ramek. Infrastruktura ebtables jest częścią
 standardowych jąder Linuksa w wersjach 2.5.x i nowszych.
 
 %prep
-%setup -q -n %{name}-v%{ver}-%{vermin}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%setup -q
 
 %build
+%configure
+
+%{__make}
+
+%if 0
 %{__make} \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}" \
 	LIBDIR="%{_libdir}/ebtables" \
 	BINDIR="%{_sbindir}" \
 	MANDIR="%{_mandir}"
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/sysconfig,/etc/rc.d/init.d,%{_sysconfdir}} \
-	$RPM_BUILD_ROOT{%{_sbindir},%{_libdir}/ebtables,%{_mandir}/man8}
+install -d $RPM_BUILD_ROOT{/etc/sysconfig,/etc/rc.d/init.d}
 
-install ebtables{,-restore,-save}	$RPM_BUILD_ROOT%{_sbindir}
-install ethertypes		$RPM_BUILD_ROOT%{_sysconfdir}
-install ebtables.8		$RPM_BUILD_ROOT%{_mandir}/man8
-install extensions/*.so	*.so	$RPM_BUILD_ROOT%{_libdir}/ebtables
-%{__sed} -i -e "s|__EXEC_PATH__|%{_sbindir}|g" $RPM_BUILD_ROOT%{_sbindir}/ebtables-save
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+# could be useful only for plugins development, but headers are not installed
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libebtc.{la,so}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/ebtables
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/ebtables-config
+cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/ebtables-config
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -85,9 +82,11 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ethertypes
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ebtables-config
 %attr(754,root,root) /etc/rc.d/init.d/ebtables
-%attr(755,root,root) %{_sbindir}/ebtables
-%attr(755,root,root) %{_sbindir}/ebtables-restore
-%attr(755,root,root) %{_sbindir}/ebtables-save
-%dir %{_libdir}/ebtables
-%attr(755,root,root) %{_libdir}/ebtables/libebt*.so
-%{_mandir}/man8/ebtables.8*
+%attr(755,root,root) %{_sbindir}/ebtables-legacy
+%attr(755,root,root) %{_sbindir}/ebtables-legacy-restore
+%attr(755,root,root) %{_sbindir}/ebtables-legacy-save
+%attr(755,root,root) %{_sbindir}/ebtablesd
+%attr(755,root,root) %{_sbindir}/ebtablesu
+%attr(755,root,root) %{_libdir}/libebtc.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libebtc.so.0
+%{_mandir}/man8/ebtables-legacy.8*
