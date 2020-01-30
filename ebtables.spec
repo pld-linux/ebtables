@@ -5,7 +5,7 @@ Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dl
 Name:		ebtables
 Version:	%{ver}.%{vermin}
 Release:	5
-License:	GPL
+License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/ebtables/%{name}-v%{ver}-%{vermin}.tar.gz
 # Source0-md5:	506742a3d44b9925955425a659c1a8d0
@@ -14,7 +14,7 @@ Source2:	%{name}-config
 Patch0:		ebtables-audit.patch
 Patch1:		ebtables-linkfix.patch
 Patch2:		ebtables-norootinst.patch
-Patch3:     ipv6_netmask_printing_fix.patch
+Patch3:		ipv6_netmask_printing_fix.patch
 URL:		http://ebtables.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
@@ -55,15 +55,13 @@ standardowych jąder Linuksa w wersjach 2.5.x i nowszych.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT{/etc/sysconfig,/etc/rc.d/init.d,%{_sysconfdir}} \
 	$RPM_BUILD_ROOT{%{_sbindir},%{_libdir}/ebtables,%{_mandir}/man8}
 
-install ebtables{,-restore}	$RPM_BUILD_ROOT%{_sbindir}
+install ebtables{,-restore,-save}	$RPM_BUILD_ROOT%{_sbindir}
 install ethertypes		$RPM_BUILD_ROOT%{_sysconfdir}
 install ebtables.8		$RPM_BUILD_ROOT%{_mandir}/man8
 install extensions/*.so	*.so	$RPM_BUILD_ROOT%{_libdir}/ebtables
-install ebtables-save		$RPM_BUILD_ROOT%{_sbindir}
 %{__sed} -i -e "s|__EXEC_PATH__|%{_sbindir}|g" $RPM_BUILD_ROOT%{_sbindir}/ebtables-save
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/ebtables
@@ -87,7 +85,9 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ethertypes
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ebtables-config
 %attr(754,root,root) /etc/rc.d/init.d/ebtables
-%attr(755,root,root) %{_sbindir}/ebtables*
+%attr(755,root,root) %{_sbindir}/ebtables
+%attr(755,root,root) %{_sbindir}/ebtables-restore
+%attr(755,root,root) %{_sbindir}/ebtables-save
 %dir %{_libdir}/ebtables
 %attr(755,root,root) %{_libdir}/ebtables/libebt*.so
 %{_mandir}/man8/ebtables.8*
