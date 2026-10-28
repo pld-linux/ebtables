@@ -1,0 +1,54 @@
+From 39d24cc47a2ccba293f6b6ad4209d2992570d67a Mon Sep 17 00:00:00 2001
+From: Phil Sutter <phil@nwl.cc>
+Date: Wed, 11 Feb 2026 20:29:33 +0100
+Subject: useful_functions: Fix for buffer overflow in parse_ip6_mask()
+
+Ilia wrote:
+> I have found several global buffer overflows in
+> useful_functions.c
+>
+> They both occur in the function parse_ip6_mask() and are caused by
+> unconditionally writing to p[16].
+>
+> The first overflow occurs when bits is equal to 128,
+> which causes p[bits / 8] = 0xff << (8 - (bits & 7)); to write at p[16].
+>
+> The second overflow occurs when bits is equal to 8,
+> which causes memset(p + (bits / 8) + 1, 0, (128 - bits) / 8); to write
+> 15 bytes starting at p + 2, which leads to the same issue.
+
+This patch contains a simplified version of his fix:
+
+- The original code attempted to div_round_up() for the second memset(),
+  to zero the fully empty mask bytes. It used the term '(bits / 8) + 1'
+  which misbehaves if bits is equal to 8.
+
+- Addressing p at offset 'bits / 8' is illegal if bits has the legal max
+  value of 128. Also, zeroing this byte is needed only if bits is not
+  divisible by 8.
+
+Reported-by: Ilia Kashintsev <ilia.kashintsev@gmail.com>
+Signed-off-by: Phil Sutter <phil@nwl.cc>
+---
+ useful_functions.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/useful_functions.c b/useful_functions.c
+index 133ae2f..7378fc9 100644
+--- a/useful_functions.c
++++ b/useful_functions.c
+@@ -364,8 +364,9 @@ static struct in6_addr *parse_ip6_mask(char *mask)
+ 	if (bits != 0) {
+ 		char *p = (char *)&maskaddr;
+ 		memset(p, 0xff, bits / 8);
+-		memset(p + (bits / 8) + 1, 0, (128 - bits) / 8);
+-		p[bits / 8] = 0xff << (8 - (bits & 7));
++		memset(p + (bits + 7) / 8, 0, (128 - bits) / 8);
++		if (bits & 7)
++			p[bits / 8] = 0xff << (8 - (bits & 7));
+ 		return &maskaddr;
+ 	}
+ 
+-- 
+2.56.0
+

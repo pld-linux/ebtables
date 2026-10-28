@@ -1,0 +1,39 @@
+From a6f972845fcf3ef13a3481af1a8f5ca15ae96cfc Mon Sep 17 00:00:00 2001
+From: Ilia Kashintsev <ilia.kashintsev@gmail.com>
+Date: Thu, 25 Dec 2025 15:32:34 +0300
+Subject: ebtables: fix null dereference in ebtables-restore
+
+Use strchrnul() instead of strchr() when trimming the trailing newline.
+This avoids NULL pointer dereference when newline is not present in the
+input.
+
+Signed-off-by: Ilia Kashintsev <ilia.kashintsev@gmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+---
+ ebtables-restore.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ebtables-restore.c b/ebtables-restore.c
+index bb4d0cf..d7df38c 100644
+--- a/ebtables-restore.c
++++ b/ebtables-restore.c
+@@ -17,6 +17,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
++#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -76,7 +77,7 @@ int main(int argc_, char *argv_[])
+ 		line++;
+ 		if (*cmdline == '#' || *cmdline == '\n')
+ 			continue;
+-		*strchr(cmdline, '\n') = '\0';
++		*strchrnul(cmdline, '\n') = '\0';
+ 		if (*cmdline == '*') {
+ 			if (table_nr != -1) {
+ 				ebt_deliver_table(&replace[table_nr]);
+-- 
+2.56.0
+

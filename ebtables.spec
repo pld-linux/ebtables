@@ -2,13 +2,17 @@ Summary:	Ethernet Bridge Tables
 Summary(pl.UTF-8):	Ethernet Bridge Tables - filtrowanie i translacja adresów dla Ethernetu
 Name:		ebtables
 Version:	2.0.11
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	https://ftp.netfilter.org/pub/ebtables/%{name}-%{version}.tar.gz
 # Source0-md5:	071c8b0a59241667a0044fb040d4fc72
 Source1:	%{name}.init
 Source2:	%{name}-config
+# https://git.netfilter.org/ebtables/commit/?id=39d24cc47a2ccba293f6b6ad4209d2992570d67a
+Patch0:		%{name}-ip6-mask-overflow.patch
+# https://git.netfilter.org/ebtables/commit/?id=a6f972845fcf3ef13a3481af1a8f5ca15ae96cfc
+Patch1:		%{name}-restore-null-deref.patch
 URL:		https://ebtables.netfilter.org/
 # <linux/netfilter/xt_AUDIT.h>
 BuildRequires:	linux-libc-headers >= 6:3.0
@@ -36,6 +40,8 @@ standardowych jąder Linuksa w wersjach 2.5.x i nowszych.
 
 %prep
 %setup -q
+%patch -P0 -p1
+%patch -P1 -p1
 
 %build
 %configure \
